@@ -1,0 +1,10 @@
+FROM maven:3.9-eclipse-temurin-24 AS build
+WORKDIR /app
+COPY . .
+RUN chmod +x mvnw && ./mvnw clean package -DskipTests
+
+FROM eclipse-temurin:24-jre
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
+EXPOSE 9090
+ENTRYPOINT ["java", "-jar", "app.jar"]
